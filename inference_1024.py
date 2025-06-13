@@ -10,13 +10,13 @@ import logging
 def parse_args():
     parser = argparse.ArgumentParser(description='FLUX image generation with LoRA')
     parser.add_argument('--model_path', type=str, 
-                        default="autodl-tmp/FLUX.1-dev",
-                        help='Path to pretrained model')
+                        default="path/to/FLUX.1-dev",
+                        help='Path to base model')
     parser.add_argument('--data_path', type=str,
-                        default="sample/ch",
-                        help='Input data path')
+                        default="sample/prompt",
+                        help='Input prompt path')
     parser.add_argument('--data_condition_path', type=str,
-                        default="sample/ch_con",
+                        default="sample/condition",
                         help='Input data_condition path')
     parser.add_argument('--output_path', type=str,
                         default="sample/output",
@@ -35,12 +35,13 @@ def main():
         args.model_path,
         torch_dtype=torch.bfloat16,
     ).to('cuda')
-    
-    # Load and fuse base LoRA weights
+    seed = 42
+    torch.manual_seed(seed)
+    # Load and fuse pretrain LoRA weights
     pipeline.load_lora_weights("path/to/pretrain lora")
     pipeline.fuse_lora()
     pipeline.unload_lora_weights()
-    # Load selected LoRA effect only if not using pretrained
+    # Load fine-tune LoRA
     pipeline.load_lora_weights("path/to/fine-tuning lora")
     def process_condition_image(image_path: str) -> Image.Image:
         condition_image = Image.open(image_path).convert("RGB")
@@ -69,28 +70,20 @@ def main():
                 print(f"Text control file not found, skipping current iteration.: {position_file}")
                 continue
 
-            result_images = []
-            for iiid in [1, 2, 3, 4]:
-                output_path = os.path.join(output_base_path, f"{sample_id}-{iiid}.png")
-                os.makedirs(os.path.dirname(output_path), exist_ok=True)
-                result = pipeline(
-                    prompt=caption,
-                    condition_image=condition_image,
-                    height=args.height,
-                    width=args.width,
-                    guidance_scale=args.guidance_scale,
-                    num_inference_steps=args.num_steps,
-                    position_file=position_file,
-                    max_sequence_length=512
-                ).images[0]
-                result.save(output_path)
-                result_image = np.array(result)
-                result_images.append(result_image)
+            output_path = os.path.join(output_base_path, f"{sample_id}.png")
+            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            result = pipeline(
+                prompt=caption,
+                condition_image=condition_image,
+                height=args.height,
+                width=args.width,
+                guidance_scale=args.guidance_scale,
+                num_inference_steps=args.num_steps,
+                position_file=position_file,
+                max_sequence_length=512
+            ).images[0]
+            result.save(output_path)
 
-
-            combined_result = np.hstack(result_images)
-            combined_result_image = Image.fromarray(combined_result)
-            combined_result_image.save(os.path.join(output_base_path, f"{sample_id}-cat.png"))
 
 if __name__ == "__main__":
     main()

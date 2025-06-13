@@ -783,7 +783,7 @@ class FluxPipeline(DiffusionPipeline, FluxLoraLoaderMixin, FromSingleFileMixin):
                 latents_dtype = latents.dtype
                 latents = self.scheduler.step(noise_pred, t, latents, return_dict=False)[0]
                 #latents = latents * mask + clean_latents * (1 - mask)
-                goal_latents = 32*32
+                goal_latents = 64*64
                 latents[:,goal_latents:,:] = clean_latents[:,goal_latents:,:]
 
                 if latents.dtype != latents_dtype:

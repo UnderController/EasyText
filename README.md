@@ -6,6 +6,7 @@
 [![HuggingFace](https://img.shields.io/badge/🤗-HuggingFace-yellow)](https://huggingface.co/lllrrnn/EasyText)
 <img src='./assets/high_qually_sample_1.jpg' width='100%' />
 </div>
+
 ---
 
 ## 👥 Authors
