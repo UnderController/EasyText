@@ -4,6 +4,7 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2505.24417-red)](https://arxiv.org/abs/2505.24417)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/songyiren725/EasyText)
 [![HuggingFace](https://img.shields.io/badge/🤗-HuggingFace-yellow)](https://huggingface.co/lllrrnn/EasyText)
+[![HuggingFace](https://img.shields.io/badge/🤗-huggingface--dataset-yellow)](https://huggingface.co/datasets/lllrrnn/EasyText)
 <img src='./assets/high_qually_sample_1.jpg' width='100%' />
 </div>
 
